@@ -1,0 +1,43 @@
+# PointMAE training configuration for KITTI LiDAR dataset
+
+# ── Data ──────────────────────────────────────────────────────────────────────
+data:
+  root: "./data/kitti"          # path to KITTI odometry root
+  sequences_train: ["00", "01", "02", "03", "04", "05", "06", "07", "08"]
+  sequences_val:   ["09", "10"]
+  n_points: 8192                # points sampled per scan
+  augment: true
+
+# ── Model ─────────────────────────────────────────────────────────────────────
+model:
+  n_centers: 64                 # number of FPS patches
+  k: 32                         # neighbors per patch
+  embed_dim: 256
+  mask_ratio: 0.75
+  # Encoder
+  enc_n_heads: 4
+  enc_n_layers: 6
+  enc_ffn_dim: 512
+  # Decoder
+  dec_n_heads: 4
+  dec_n_layers: 4
+  dec_ffn_dim: 512
+  dropout: 0.1
+
+# ── Training ──────────────────────────────────────────────────────────────────
+training:
+  epochs: 300
+  batch_size: 32
+  num_workers: 4
+  # Optimizer
+  optimizer: adamw
+  lr: 1.0e-3
+  weight_decay: 0.05
+  # Scheduler: cosine annealing
+  scheduler: cosine
+  warmup_epochs: 10
+  min_lr: 1.0e-6
+  # Logging & checkpointing
+  log_interval: 50              # log every N batches
+  save_interval: 10             # save checkpoint every N epochs
+  output_dir: "./checkpoints"
